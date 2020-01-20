@@ -28,6 +28,8 @@ import java.util.concurrent.Semaphore;
 import java.util.function.Supplier;
 
 public class Proglet {
+    public static String host = ""; //TODO: non-static?
+
     public static CompletableFuture<List<String>> loginServices()
     {
         return CompletableFuture.supplyAsync(new Supplier<List<String>>() {
@@ -74,7 +76,7 @@ public class Proglet {
                             .connectTimeout(Duration.ofSeconds(10))
                             .build();
                     HttpRequest request = HttpRequest.newBuilder()
-                            .uri(URI.create("http://localhost:19967/api/login/login"))
+                            .uri(URI.create(host + "/api/login/login"))
                             .timeout(Duration.ofSeconds(10))
                             .header("Content-Type", "application/json")
                             .POST(HttpRequest.BodyPublishers.ofString(post.toJson()))
@@ -95,16 +97,16 @@ public class Proglet {
                             post.put("loginservice", service);
 
                             request = HttpRequest.newBuilder()
-                                    .uri(URI.create("http://localhost:19967/api/login/oauthfinish"))
+                                    .uri(URI.create(host + "/api/login/oauthfinish"))
                                     .timeout(Duration.ofSeconds(10))
                                     .header("Content-Type", "application/json")
                                     .POST(HttpRequest.BodyPublishers.ofString(post.toJson()))
                                     .build();
                             response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-                            System.out.println(response);
+                            JsonObject finalResult = Jsoner.deserialize(response.body(), new JsonObject());
+                            return new LoginResponse((String)finalResult.get("jwt"));
 
-                            break;
                         default:
                             System.err.println("Unsupported login option");
                     }

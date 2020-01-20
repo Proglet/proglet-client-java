@@ -9,6 +9,7 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         CommandLine commandLine = new  CommandLine();
+        commandLine.register(Settings.class);
         commandLine.register(Help.class);
         commandLine.register(LoginServices.class);
         commandLine.register(Login.class);
