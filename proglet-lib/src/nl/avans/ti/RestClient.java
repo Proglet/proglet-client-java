@@ -21,7 +21,7 @@ public class RestClient {
     }
 
 
-    public JsonObject get(String endpoint)
+    public String get(String endpoint)
     {
         HttpClient client = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(10))
@@ -29,13 +29,14 @@ public class RestClient {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(this.hostname + "/" + endpoint))
                 .timeout(Duration.ofSeconds(10))
+                .header("Authorization", "Bearer " + Proglet.token)
                 .GET()
                 .build();
 
         HttpResponse<String> response = null;
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            return Jsoner.deserialize(response.body(), new JsonObject());
+            return response.body();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -44,27 +45,14 @@ public class RestClient {
         return null;
     }
 
+    public JsonObject getObject(String endpoint)
+    {
+        return Jsoner.deserialize(get(endpoint), new JsonObject());
+    }
+
     public JsonArray getArray(String endpoint)
     {
-        HttpClient client = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(10))
-                .build();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(this.hostname + "/" + endpoint))
-                .timeout(Duration.ofSeconds(10))
-                .GET()
-                .build();
-
-        HttpResponse<String> response = null;
-        try {
-            response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            return Jsoner.deserialize(response.body(), new JsonArray());
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return Jsoner.deserialize(get(endpoint), new JsonArray());
     }
 
     public JsonObject post(String endpoint, JsonObject data)
@@ -76,6 +64,7 @@ public class RestClient {
                 .uri(URI.create(this.hostname + "/" + endpoint))
                 .timeout(Duration.ofSeconds(10))
                 .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + Proglet.token)
                 .POST(HttpRequest.BodyPublishers.ofString(data.toJson()))
                 .build();
 

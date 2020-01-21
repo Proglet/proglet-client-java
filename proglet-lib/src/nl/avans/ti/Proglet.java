@@ -3,12 +3,6 @@ package nl.avans.ti;
 import com.github.cliftonlabs.json_simple.*;
 import javafx.application.Application;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -16,6 +10,7 @@ import java.util.function.Supplier;
 
 public class Proglet {
     public static String host = ""; //TODO: non-static?
+    public static String token = "";
 
 
     public static CompletableFuture<List<String>> loginServices()
@@ -67,5 +62,7 @@ public class Proglet {
         });
     }
 
-
+    public static boolean testLogin() {
+        return new RestClient(Proglet.host).get("api/login/testlogin").equals("Logged in!");
+    }
 }

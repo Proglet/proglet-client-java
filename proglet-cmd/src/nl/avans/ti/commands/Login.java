@@ -2,6 +2,7 @@ package nl.avans.ti.commands;
 
 import nl.avans.ti.LoginResponse;
 import nl.avans.ti.Proglet;
+import nl.avans.ti.Settings;
 import nl.avans.ti.util.Command;
 import nl.avans.ti.util.Parameter;
 
@@ -18,9 +19,8 @@ public class Login implements Runnable {
     public void run() {
         try {
             LoginResponse login = Proglet.login(loginMethod).get();
-
-            System.out.println(login);
-
+            Settings.setJwtToken(login.token);
+            System.out.println("Logged in");
 
         } catch (InterruptedException e) {
             e.printStackTrace();
