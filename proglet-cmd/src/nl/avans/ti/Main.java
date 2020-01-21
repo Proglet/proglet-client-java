@@ -13,6 +13,7 @@ public class Main {
         commandLine.register(Help.class);
         commandLine.register(LoginServices.class);
         commandLine.register(Login.class);
+        commandLine.setOptions(args);
 
         commandLine.execute(args);
     }

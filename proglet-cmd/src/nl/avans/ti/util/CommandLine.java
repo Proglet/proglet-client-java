@@ -96,8 +96,6 @@ public class CommandLine {
                         }
                     }
                 }
-
-
             }
         }
 
@@ -119,4 +117,6 @@ public class CommandLine {
         ((Runnable)cmd).run();
     }
 
+    public void setOptions(String[] args) {
+    }
 }

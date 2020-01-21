@@ -8,4 +8,7 @@ public class Settings {
     {
         Proglet.host = hostname;
     }
+
+    @Option(name = "tokenpath")
+    public static String dataFolder = System.getenv("APPDATA") + "/proglet";
 }
