@@ -2,11 +2,13 @@ package nl.avans.ti;
 
 import com.github.cliftonlabs.json_simple.*;
 import javafx.application.Application;
+import nl.avans.ti.model.LoginGui;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class Proglet {
     public static String host = ""; //TODO: non-static?
@@ -64,5 +66,17 @@ public class Proglet {
 
     public static boolean testLogin() {
         return new RestClient(Proglet.host).get("api/login/testlogin").equals("Logged in!");
+    }
+
+
+    public static List<Course> getCourses() {
+        JsonArray coursesJson = new RestClient(Proglet.host).getArray("api/Courses");
+
+        return coursesJson.stream().map(o -> {
+            JsonObject jo = (JsonObject)o;
+
+            return new Course((Long)jo.get("id"), (String)jo.get("name"), (String)jo.get("title"), (String)jo.get("description"));
+        }).collect(Collectors.toList());
+
     }
 }

@@ -16,6 +16,8 @@ public class CommandLine {
     private String command;
 
     public void execute(String[] args) throws Exception {
+        if(command == null)
+            command = "help";
         for(Class c : commands) {
             if(c.getDeclaredAnnotation(Command.class) == null)
                 continue;
@@ -53,6 +55,19 @@ public class CommandLine {
                     }
                 }
             });
+
+        //sets commandline if needed
+        Arrays.stream(command.getDeclaredFields())
+                .filter(f -> f.getType().equals(CommandLine.class))
+                .forEach(f -> {
+                    f.setAccessible(true);
+                    try {
+                        f.set(cmd, this);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                });
+
         //run
         ((Runnable)cmd).run();
     }
@@ -123,4 +138,9 @@ public class CommandLine {
             }
         }
     }
+    public List<Class> getCommands()
+    {
+        return this.commands;
+    }
+
 }

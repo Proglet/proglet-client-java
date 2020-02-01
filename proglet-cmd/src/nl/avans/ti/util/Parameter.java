@@ -14,4 +14,6 @@ public @interface Parameter {
     String name();
 
     boolean optional();
+
+    String description();
 }

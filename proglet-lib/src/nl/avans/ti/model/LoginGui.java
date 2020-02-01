@@ -1,21 +1,15 @@
-package nl.avans.ti;
+package nl.avans.ti.model;
 
-import com.github.cliftonlabs.json_simple.JsonException;
 import com.github.cliftonlabs.json_simple.JsonObject;
 import com.github.cliftonlabs.json_simple.Jsoner;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
-
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Supplier;
 
 public class LoginGui extends Application {
 
