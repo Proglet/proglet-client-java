@@ -143,4 +143,14 @@ public class CommandLine {
         return this.commands;
     }
 
+    public void registerPackage(String packageName) {
+        List<String> classes = ClassScanner.findClassesInPackage(packageName, true);
+        classes.stream().forEach(c -> {
+            try {
+                register(Class.forName(c));
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        });
+    }
 }
