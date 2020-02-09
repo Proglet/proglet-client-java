@@ -1,6 +1,5 @@
 package nl.avans.ti;
 
-import nl.avans.ti.commands.*;
 import nl.avans.ti.util.CommandLine;
 
 public class Main {

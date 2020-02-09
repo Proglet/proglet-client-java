@@ -4,6 +4,7 @@ import com.github.cliftonlabs.json_simple.*;
 import javafx.application.Application;
 import nl.avans.ti.model.LoginGui;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -38,7 +39,7 @@ public class Proglet {
                 JsonObject postData = new JsonObject();
                 postData.put("loginservice", service);
                 JsonObject loginResult = new RestClient(Proglet.host).post("api/login/login", postData);
-
+                System.out.println("Got initial login response...");
 
                 switch((String)loginResult.get("result"))
                 {
@@ -69,14 +70,18 @@ public class Proglet {
     }
 
 
-    public static List<Course> getCourses() {
+    public static CompletableFuture<List<Course>> getCourses() {
         JsonArray coursesJson = new RestClient(Proglet.host).getArray("api/Courses");
+        return CompletableFuture.supplyAsync(new Supplier<>() {
+            @Override
+            public List<Course> get() {
 
-        return coursesJson.stream().map(o -> {
-            JsonObject jo = (JsonObject)o;
+                return coursesJson.stream().map(o -> {
+                    JsonObject jo = (JsonObject) o;
 
-            return new Course((Long)jo.get("id"), (String)jo.get("name"), (String)jo.get("title"), (String)jo.get("description"));
-        }).collect(Collectors.toList());
-
+                    return new Course(((BigDecimal) jo.get("id")).longValue(), (String) jo.get("name"), (String) jo.get("title"), (String) jo.get("description"), (Boolean)jo.get("registered"));
+                }).collect(Collectors.toList());
+            }
+        });
     }
 }

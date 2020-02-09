@@ -13,23 +13,29 @@ public class CommandLine {
 
     private List<String> parameters = new ArrayList<>();
     private Map<String, String> options = new HashMap<>();
-    private String command;
 
     public void execute(String[] args) throws Exception {
-        if(command == null)
-            command = "help";
+        if(parameters.size() == 0)
+            parameters.add("help");
+
         for(Class c : commands) {
             if(c.getDeclaredAnnotation(Command.class) == null)
                 continue;
             Command commandAnnotation = (Command)c.getDeclaredAnnotation(Command.class); //TODO: should this be casted?
-            if(commandAnnotation.command().equals(command)) {
+
+            boolean match = true;
+            String[] splitted = commandAnnotation.command().split(" ");
+            for(int i = 0; i < splitted.length; i++)
+                if(parameters.size() <= i || !splitted[i].equals(parameters.get(i)))
+                    match = false;
+            if(match) {
                 if(!Runnable.class.isAssignableFrom(c))
                     throw new Exception("Command " + c.getName() + " is not a Runnable command");
                 runCommand(c, args);
                 return;
             }
         }
-        System.out.println("Command " + command + " not found");
+        System.out.println("Command " + parameters.get(0) + " not found");
     }
 
     //TODO: scan all classes or a package dynamically
@@ -93,10 +99,6 @@ public class CommandLine {
             }
             else
                 parameters.add(args[i]);
-        }
-        if(!parameters.isEmpty()) {
-            command = parameters.get(0);
-            parameters.remove(0); //remove the actual command
         }
     }
 
