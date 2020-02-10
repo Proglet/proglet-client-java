@@ -29,6 +29,8 @@ public class CommandLine {
                 if(parameters.size() <= i || !splitted[i].equals(parameters.get(i)))
                     match = false;
             if(match) {
+                for(int i = 0; i < splitted.length; i++)
+                    parameters.remove(0);
                 if(!Runnable.class.isAssignableFrom(c))
                     throw new Exception("Command " + c.getName() + " is not a Runnable command");
                 runCommand(c, args);

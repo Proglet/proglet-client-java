@@ -39,7 +39,6 @@ public class Proglet {
                 JsonObject postData = new JsonObject();
                 postData.put("loginservice", service);
                 JsonObject loginResult = new RestClient(Proglet.host).post("api/login/login", postData);
-                System.out.println("Got initial login response...");
 
                 switch((String)loginResult.get("result"))
                 {
