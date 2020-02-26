@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import nl.avans.ti.Proglet;
 
 public class LoginGui extends Application {
 
@@ -33,7 +34,7 @@ public class LoginGui extends Application {
             @Override
             public void changed(ObservableValue ov, Worker.State oldState, Worker.State newState) {
                 if (newState == Worker.State.SUCCEEDED) {
-                    if(webEngine.getLocation().contains("localhost")) { //TODO: check for address of Proglet API
+                    if(webEngine.getLocation().contains(Proglet.host)) { //TODO: check for address of Proglet API
                         //TODO: communicate back to the Proglet class!!
                         JsonObject result = Jsoner.deserialize((String) webEngine.executeScript("document.documentElement.innerText"), new JsonObject());
 
