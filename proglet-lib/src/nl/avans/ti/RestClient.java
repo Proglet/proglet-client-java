@@ -25,9 +25,11 @@ public class RestClient {
     {
         HttpClient client = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(10))
+                .version(HttpClient.Version.HTTP_1_1)
                 .build();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(this.hostname + "/" + endpoint))
+                .version(HttpClient.Version.HTTP_1_1)
                 .timeout(Duration.ofSeconds(10))
                 .header("Authorization", "Bearer " + Proglet.token)
                 .GET()
@@ -59,18 +61,26 @@ public class RestClient {
     {
         HttpClient client = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(10))
+                .version(HttpClient.Version.HTTP_1_1)
                 .build();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(this.hostname + "/" + endpoint))
                 .timeout(Duration.ofSeconds(10))
+                .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer " + Proglet.token)
+                .version(HttpClient.Version.HTTP_1_1)
                 .POST(HttpRequest.BodyPublishers.ofString(data.toJson()))
                 .build();
+
 
         HttpResponse<String> response = null;
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if(response.statusCode() == 400)
+            {
+                System.err.println("Got status 400???");
+            }
             return Jsoner.deserialize(response.body(), new JsonObject());
         } catch (IOException e) {
             e.printStackTrace();
