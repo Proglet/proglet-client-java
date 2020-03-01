@@ -40,6 +40,11 @@ public class Proglet {
                 postData.put("loginservice", service);
                 JsonObject loginResult = new RestClient(Proglet.host).post("api/login/login", postData);
 
+                if(loginResult == null) {
+                    System.out.println("Could not connect to proglet server");
+                    return null;
+                }
+
                 switch((String)loginResult.get("result"))
                 {
                     case "oauth":

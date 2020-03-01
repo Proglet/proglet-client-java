@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/proglet-cmd/proglet-cmd.iml" filepath="$PROJECT_DIR$/proglet-cmd/proglet-cmd.iml" />
+      <module fileurl="file://$PROJECT_DIR$/proglet-intellij-edutools/proglet-intellij-edutools.iml" filepath="$PROJECT_DIR$/proglet-intellij-edutools/proglet-intellij-edutools.iml" />
       <module fileurl="file://$PROJECT_DIR$/proglet-lib/proglet-lib.iml" filepath="$PROJECT_DIR$/proglet-lib/proglet-lib.iml" />
     </modules>
   </component>

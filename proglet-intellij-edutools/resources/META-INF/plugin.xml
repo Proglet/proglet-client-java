@@ -1,0 +1,31 @@
+<idea-plugin>
+    <id>nl.avans.ti.proglet-intellij-edutools</id>
+    <name>Proglet connector</name>
+    <vendor email="info@proglet.nl" url="https://www.proglet.nl">Proglet</vendor>
+
+    <description><![CDATA[
+    A plugin to communicate with the proglet server<br>
+    This plugin can be used to
+    <ul>
+        <li>Download and update projects</li>
+        <li>Hand in solutions on the proglet server</li>
+    </ul>
+    ]]></description>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+    </extensions>
+
+    <actions>
+        <group id="MyPlugin.SampleMenu" text="Proglet" description="Proglet actions menu">
+            <add-to-group group-id="MainMenu" anchor="last"/>
+            <action id="proglet.Test" class="nl.avans.ti.proglet.actions.Test" text="Test" description="Test"/>
+            <action id="proglet.Settings" class="nl.avans.ti.proglet.actions.Settings" text="Settings" description="Opens the settings dialog"/>
+            <action id="proglet.Login" class="nl.avans.ti.proglet.actions.Login" text="Login" description="Logs into the proglet backend"/>
+            <action id="proglet.Courses" class="nl.avans.ti.proglet.actions.Courses" text="Courses" description="Register for a course"/>
+        </group>    </actions>
+</idea-plugin>
