@@ -19,12 +19,15 @@
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
     </extensions>
+    <idea-version since-build="193"/>
+    <applicationListeners>
+        <listener class="nl.avans.ti.proglet.Startup" topic="com.intellij.ide.AppLifecycleListener"/>
+    </applicationListeners>
 
     <actions>
         <group id="MyPlugin.SampleMenu" text="Proglet" description="Proglet actions menu">
             <add-to-group group-id="MainMenu" anchor="last"/>
             <action id="proglet.Test" class="nl.avans.ti.proglet.actions.Test" text="Test" description="Test"/>
-            <action id="proglet.Settings" class="nl.avans.ti.proglet.actions.Settings" text="Settings" description="Opens the settings dialog"/>
             <action id="proglet.Login" class="nl.avans.ti.proglet.actions.Login" text="Login" description="Logs into the proglet backend"/>
             <action id="proglet.Courses" class="nl.avans.ti.proglet.actions.Courses" text="Courses" description="Register for a course"/>
         </group>    </actions>
