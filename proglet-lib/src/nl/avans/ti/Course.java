@@ -1,5 +1,9 @@
 package nl.avans.ti;
 
+import com.github.cliftonlabs.json_simple.JsonObject;
+
+import java.util.concurrent.CompletableFuture;
+
 public class Course {
     private long id;
     private String name;
@@ -44,5 +48,19 @@ public class Course {
                 ", description='" + description + '\'' +
                 ", registered=" + registered +
                 '}';
+    }
+
+    public CompletableFuture<Void> unregister() {
+        return CompletableFuture.runAsync(() ->
+        {
+            JsonObject loginResult = new RestClient(Proglet.host).post("api/Courses/unregister/" + id, null);
+        });
+    }
+
+    public CompletableFuture<Void> enroll() {
+        return CompletableFuture.runAsync(() ->
+        {
+            JsonObject loginResult = new RestClient(Proglet.host).post("api/Courses/Enroll/" + id, null);
+        });
     }
 }

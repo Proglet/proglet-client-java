@@ -15,14 +15,12 @@ import java.time.Duration;
 public class RestClient {
     private final String hostname;
 
-    public RestClient(String hostname)
-    {
+    public RestClient(String hostname) {
         this.hostname = hostname;
     }
 
 
-    public String get(String endpoint)
-    {
+    public String get(String endpoint) {
         HttpClient client = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(10))
                 .version(HttpClient.Version.HTTP_1_1)
@@ -47,15 +45,19 @@ public class RestClient {
         return null;
     }
 
-    public JsonObject getObject(String endpoint)
-    {
+    public JsonObject getObject(String endpoint) {
         return Jsoner.deserialize(get(endpoint), new JsonObject());
     }
 
-    public JsonArray getArray(String endpoint)
-    {
+    public JsonArray getArray(String endpoint) {
         return Jsoner.deserialize(get(endpoint), new JsonArray());
     }
+
+    public JsonObject post(String endpoint)
+    {
+        return post(endpoint, null);
+    }
+
 
     public JsonObject post(String endpoint, JsonObject data)
     {
@@ -70,7 +72,7 @@ public class RestClient {
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer " + Proglet.token)
                 .version(HttpClient.Version.HTTP_1_1)
-                .POST(HttpRequest.BodyPublishers.ofString(data.toJson()))
+                .POST(HttpRequest.BodyPublishers.ofString(data != null ? data.toJson() : ""))
                 .build();
 
 
