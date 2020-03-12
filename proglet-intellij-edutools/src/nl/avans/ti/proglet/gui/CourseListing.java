@@ -1,5 +1,6 @@
 package nl.avans.ti.proglet.gui;
 
+import com.intellij.openapi.project.ex.ProjectManagerEx;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBList;
@@ -8,12 +9,16 @@ import com.intellij.ui.components.JBScrollPane;
 import groovy.swing.factory.BevelBorderFactory;
 import nl.avans.ti.Course;
 import nl.avans.ti.Proglet;
+import org.jdom.JDOMException;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
+import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 public class CourseListing extends DialogWrapper {
@@ -74,10 +79,22 @@ public class CourseListing extends DialogWrapper {
                                 course.unregister().thenAccept(e -> refresh());
                             }
                         }));
-                        rightPanel.add(new JButton(new AbstractAction("Activate") {
+                        rightPanel.add(new JButton(new AbstractAction("Open") {
                             @Override
                             public void actionPerformed(ActionEvent actionEvent) {
+                                CourseListing.this.close(0, true);
+                                course.downloadProject().thenAccept(e ->
+                                {
+                                    File projectDir = new File(FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + "/proglet/" + course.getId() + "/");
 
+                                    try {
+                                        ProjectManagerEx.getInstance().loadAndOpenProject(projectDir);
+                                    } catch (IOException ex) {
+                                        ex.printStackTrace();
+                                    } catch (JDOMException ex) {
+                                        ex.printStackTrace();
+                                    }
+                                });
                             }
                         }));
                     } else {

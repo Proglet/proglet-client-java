@@ -20,6 +20,7 @@ public class RestClient {
     }
 
 
+    //TODO: fix ugly code duplication
     public String get(String endpoint) {
         HttpClient client = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(10))
@@ -36,6 +37,31 @@ public class RestClient {
         HttpResponse<String> response = null;
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            return response.body();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public byte[] getFile(String endpoint) {
+        HttpClient client = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(10))
+                .version(HttpClient.Version.HTTP_1_1)
+                .build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(this.hostname + "/" + endpoint))
+                .version(HttpClient.Version.HTTP_1_1)
+                .timeout(Duration.ofSeconds(10))
+                .header("Authorization", "Bearer " + Proglet.token)
+                .GET()
+                .build();
+
+        HttpResponse<byte[]> response = null;
+        try {
+            response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
             return response.body();
         } catch (IOException e) {
             e.printStackTrace();
