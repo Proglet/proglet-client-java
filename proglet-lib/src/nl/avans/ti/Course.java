@@ -8,11 +8,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.concurrent.CompletableFuture;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 public class Course {
@@ -20,14 +19,16 @@ public class Course {
     private String name;
     private String title;
     private String description;
+    private String curriculum;
     private boolean registered;
 
-    public Course(long courseId, String name, String title, String description, boolean registered) {
+    public Course(long courseId, String name, String title, String description, String curriculum, boolean registered) {
         this.id  = courseId;
         this.name = name;
         this.title = title;
         this.description = description;
         this.registered = registered;
+        this.curriculum = curriculum;
     }
 
     public long getId() {
@@ -74,6 +75,12 @@ public class Course {
             JsonObject loginResult = new RestClient(Proglet.host).post("api/Courses/Enroll/" + id, null);
         });
     }
+
+    public Path projectPath()
+    {
+        return Paths.get(FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + "/proglet/" + this.name + " " + this.curriculum + "/");
+    }
+
 
     public CompletableFuture<Void> downloadProject() {
         return CompletableFuture.runAsync(() ->
@@ -135,5 +142,9 @@ public class Course {
         }
 
         return destFile;
+    }
+
+    public String getCurriculum() {
+        return this.curriculum;
     }
 }

@@ -62,10 +62,14 @@ public class CourseListing extends DialogWrapper {
                     cell.setPreferredSize(new Dimension(800, 100));
                     cell.setMaximumSize(new Dimension(800, 100));
 
-                    JBLabel name, description;
-                    cell.add(name = new JBLabel(course.getTitle()), BorderLayout.NORTH);
+                    JBLabel name, description, curriculum;
+                    JPanel topPane = new JPanel(new BorderLayout());
+                    topPane.add(name = new JBLabel(course.getTitle()), BorderLayout.CENTER);
+                    topPane.add(curriculum = new JBLabel(course.getCurriculum()), BorderLayout.EAST);
+                    cell.add(topPane, BorderLayout.NORTH);
                     cell.add(description = new JBLabel(course.getDescription()), BorderLayout.CENTER);
                     name.setFont(name.getFont().deriveFont(20.0f));
+                    curriculum.setFont(curriculum.getFont().deriveFont(10.0f));
 
                     JPanel rightPanel = new JPanel();
                     rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.PAGE_AXIS));

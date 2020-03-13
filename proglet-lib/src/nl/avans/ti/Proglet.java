@@ -83,7 +83,7 @@ public class Proglet {
                 return coursesJson.stream().map(o -> {
                     JsonObject jo = (JsonObject) o;
 
-                    return new Course(((BigDecimal) jo.get("id")).longValue(), (String) jo.get("name"), (String) jo.get("title"), (String) jo.get("description"), (Boolean)jo.get("registered"));
+                    return new Course(((BigDecimal) jo.get("id")).longValue(), (String) jo.get("name"), (String) jo.get("title"), (String) jo.get("description"), (String)jo.get("curriculum"), (Boolean)jo.get("registered"));
                 }).collect(Collectors.toList());
             }
         });
