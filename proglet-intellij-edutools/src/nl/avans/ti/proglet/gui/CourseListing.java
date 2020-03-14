@@ -1,5 +1,14 @@
 package nl.avans.ti.proglet.gui;
 
+import com.intellij.ide.DataManager;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.ActionPlaces;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder;
+import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode;
+import com.intellij.openapi.externalSystem.util.ExternalSystemUtil;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ex.ProjectManagerEx;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.components.JBLabel;
@@ -11,6 +20,9 @@ import nl.avans.ti.Course;
 import nl.avans.ti.Proglet;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.gradle.action.ImportProjectFromScriptAction;
+import org.jetbrains.plugins.gradle.settings.GradleSettings;
+import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -19,6 +31,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.concurrent.ExecutionException;
 
 public class CourseListing extends DialogWrapper {
@@ -89,10 +103,17 @@ public class CourseListing extends DialogWrapper {
                                 CourseListing.this.close(0, true);
                                 course.downloadProject().thenAccept(e ->
                                 {
-                                    File projectDir = new File(FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + "/proglet/" + course.getId() + "/");
-
                                     try {
-                                        ProjectManagerEx.getInstance().loadAndOpenProject(projectDir);
+                                        Project newProject = ProjectManagerEx.getInstance().loadAndOpenProject(course.projectPath().toFile());
+
+                                        if(!Files.exists(Paths.get(newProject.getBasePath()).resolve(".gradle")))
+                                            ExternalSystemUtil.refreshProject(
+                                                    newProject,
+                                                    GradleConstants.SYSTEM_ID,
+                                                    newProject.getBasePath(),
+                                                    false,
+                                                    ProgressExecutionMode.MODAL_SYNC);
+
                                     } catch (IOException ex) {
                                         ex.printStackTrace();
                                     } catch (JDOMException ex) {

@@ -15,7 +15,7 @@
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
     <depends>com.intellij.modules.platform</depends>
-
+    <depends>com.intellij.gradle</depends>
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
     </extensions>
@@ -25,10 +25,17 @@
     </applicationListeners>
 
     <actions>
-        <group id="MyPlugin.SampleMenu" text="Proglet" description="Proglet actions menu">
+        <group id="nl.avans.ti.proglet.MainMenu" text="Proglet" description="Proglet actions menu">
             <add-to-group group-id="MainMenu" anchor="last"/>
-            <action id="proglet.Test" class="nl.avans.ti.proglet.actions.Test" text="Test" description="Test"/>
-            <action id="proglet.Login" class="nl.avans.ti.proglet.actions.Login" text="Login" description="Logs into the proglet backend"/>
-            <action id="proglet.Courses" class="nl.avans.ti.proglet.actions.Courses" text="Courses" description="Register for a course"/>
-        </group>    </actions>
+            <action id="proglet.mainmenu.Login" class="nl.avans.ti.proglet.actions.Login" text="Login" description="Logs into the proglet backend"/>
+            <action id="proglet.mainmenu.Courses" class="nl.avans.ti.proglet.actions.Courses" text="Courses" description="Register for a course"/>
+        </group>
+        <group id="nl.avans.ti.proglet.QuickStart" text="Proglet" description="Proglet actions menu">
+            <add-to-group group-id="WelcomeScreen.QuickStart" anchor="first" />
+            <action id="proglet.quickstart.Login" class="nl.avans.ti.proglet.actions.Login" text="Login to Proglet" description="Logs into the proglet backend"/>
+            <action id="proglet.quickstart.Courses" class="nl.avans.ti.proglet.actions.Courses" text="Open Proglet Course" description="Register for a course"/>
+        </group>
+
+
+    </actions>
 </idea-plugin>

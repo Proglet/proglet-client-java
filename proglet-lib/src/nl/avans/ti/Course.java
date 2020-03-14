@@ -1,18 +1,12 @@
 package nl.avans.ti;
 
 import com.github.cliftonlabs.json_simple.JsonObject;
+import nl.avans.ti.util.Unzip;
 
 import javax.swing.filechooser.FileSystemView;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.CompletableFuture;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 public class Course {
     private long id;
@@ -51,6 +45,9 @@ public class Course {
         return registered;
     }
 
+    public String getCurriculum() {
+        return this.curriculum;
+    }
     @Override
     public String toString() {
         return "Course{" +
@@ -85,66 +82,14 @@ public class Course {
     public CompletableFuture<Void> downloadProject() {
         return CompletableFuture.runAsync(() ->
         {
+            JsonObject info = new RestClient(Proglet.host).getObject("api/Courses/" + id);
             byte[] data = new RestClient(Proglet.host).getFile("api/Courses/DownloadMainProject/" + id);
-            ZipInputStream zipFile = new ZipInputStream(new ByteArrayInputStream(data));
-            try {
-                byte buffer[] = new byte[1024];
-                File destDir = new File(FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + "/proglet/" + id + "/");
 
-                Files.createDirectories(Paths.get(destDir.getPath()));
-
-                ZipEntry entry = zipFile.getNextEntry();
-                while(entry != null)
-                {
-                    File newFile = newFile(destDir, entry);
-
-
-                    if(!Files.exists(Paths.get(newFile.getParent())))
-                        Files.createDirectories(Paths.get(newFile.getParent()));
-
-                    if(entry.isDirectory())
-                    {
-                        entry = zipFile.getNextEntry();
-                        continue;
-                    }
-
-                    try {
-                        FileOutputStream fos = new FileOutputStream(newFile);
-                        int len;
-                        while ((len = zipFile.read(buffer)) > 0) {
-                            fos.write(buffer, 0, len);
-                        }
-                        fos.close();
-                    } catch(IOException e)
-                    {
-                        e.printStackTrace();
-                    }
-                    entry = zipFile.getNextEntry();
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-
+            Unzip.unzip(data, projectPath());
         });
     }
 
-    //TODO: move to util
-    public static File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {
-        File destFile = new File(destinationDir, zipEntry.getName());
 
-        String destDirPath = destinationDir.getCanonicalPath();
-        String destFilePath = destFile.getCanonicalPath();
 
-        if (!destFilePath.startsWith(destDirPath + File.separator)) {
-            throw new IOException("Entry is outside of the target dir: " + zipEntry.getName());
-        }
 
-        return destFile;
-    }
-
-    public String getCurriculum() {
-        return this.curriculum;
-    }
 }

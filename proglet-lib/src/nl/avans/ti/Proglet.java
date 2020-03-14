@@ -1,6 +1,7 @@
 package nl.avans.ti;
 
-import com.github.cliftonlabs.json_simple.*;
+import com.github.cliftonlabs.json_simple.JsonArray;
+import com.github.cliftonlabs.json_simple.JsonObject;
 import javafx.application.Application;
 import nl.avans.ti.model.LoginGui;
 
