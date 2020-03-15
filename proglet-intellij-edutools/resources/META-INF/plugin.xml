@@ -27,6 +27,7 @@
     <actions>
         <group id="nl.avans.ti.proglet.MainMenu" text="Proglet" description="Proglet actions menu">
             <add-to-group group-id="MainMenu" anchor="last"/>
+            <action id="proglet.mainmenu.Test" class="nl.avans.ti.proglet.actions.Test" text="Test" description="Test"/>
             <action id="proglet.mainmenu.Login" class="nl.avans.ti.proglet.actions.Login" text="Login" description="Logs into the proglet backend"/>
             <action id="proglet.mainmenu.Courses" class="nl.avans.ti.proglet.actions.Courses" text="Courses" description="Register for a course"/>
         </group>

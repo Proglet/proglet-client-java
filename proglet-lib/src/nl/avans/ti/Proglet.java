@@ -76,10 +76,10 @@ public class Proglet {
 
 
     public static CompletableFuture<List<Course>> getCourses() {
-        JsonArray coursesJson = new RestClient(Proglet.host).getArray("api/Courses");
         return CompletableFuture.supplyAsync(new Supplier<>() {
             @Override
             public List<Course> get() {
+                JsonArray coursesJson = new RestClient(Proglet.host).getArray("api/Courses");
 
                 return coursesJson.stream().map(o -> {
                     JsonObject jo = (JsonObject) o;
@@ -87,6 +87,14 @@ public class Proglet {
                     return new Course(((BigDecimal) jo.get("id")).longValue(), (String) jo.get("name"), (String) jo.get("title"), (String) jo.get("description"), (String)jo.get("curriculum"), (Boolean)jo.get("registered"));
                 }).collect(Collectors.toList());
             }
+        });
+    }
+
+    public static CompletableFuture<Void> submitExercise(int courseId, String exerciseName, byte[] zipData) {
+        return CompletableFuture.runAsync(() -> {
+
+            //new RestClient(Proglet.host).post("api/Exercise/Submit");
+
         });
     }
 }
