@@ -4,7 +4,9 @@ import com.github.cliftonlabs.json_simple.JsonArray;
 import com.github.cliftonlabs.json_simple.JsonObject;
 import javafx.application.Application;
 import nl.avans.ti.model.LoginGui;
+import nl.avans.ti.util.MultiPartBodyPublisher;
 
+import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -93,8 +95,13 @@ public class Proglet {
     public static CompletableFuture<Void> submitExercise(int courseId, String exerciseName, byte[] zipData) {
         return CompletableFuture.runAsync(() -> {
 
-            //new RestClient(Proglet.host).post("api/Exercise/Submit");
+            MultiPartBodyPublisher publisher = new MultiPartBodyPublisher()
+                    .addPart("CourseId", courseId+"")
+                    .addPart("ExerciseName", exerciseName)
+                    .addPart("Data", () -> new ByteArrayInputStream(zipData), "test.txt", "text/plain");
 
+
+            JsonObject data = new RestClient(Proglet.host).post("api/Exercises/Submit", publisher);
         });
     }
 }

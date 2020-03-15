@@ -3,6 +3,8 @@ package nl.avans.ti;
 import com.github.cliftonlabs.json_simple.JsonArray;
 import com.github.cliftonlabs.json_simple.JsonObject;
 import com.github.cliftonlabs.json_simple.Jsoner;
+import nl.avans.ti.util.MultiPartBodyPublisher;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 
 import java.io.IOException;
 import java.net.URI;
@@ -80,7 +82,7 @@ public class RestClient {
 
     public JsonObject post(String endpoint)
     {
-        return post(endpoint, null);
+        return post(endpoint, (JsonObject)null);
     }
 
 
@@ -117,4 +119,36 @@ public class RestClient {
         return null;
     }
 
+    public JsonObject post(String endpoint, MultiPartBodyPublisher publisher)
+    {
+        HttpClient client = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(10))
+                .version(HttpClient.Version.HTTP_1_1)
+                .build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(this.hostname + "/" + endpoint))
+                .timeout(Duration.ofSeconds(10))
+                .header("Accept", "application/json")
+                .headers("Content-Type","multipart/form-data; boundary=" + publisher.getBoundary())
+                .header("Authorization", "Bearer " + Proglet.token)
+                .version(HttpClient.Version.HTTP_1_1)
+                .POST(publisher.build())
+                .build();
+
+
+        HttpResponse<String> response = null;
+        try {
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if(response.statusCode() == 400)
+            {
+                System.err.println("Got status 400???");
+            }
+            return Jsoner.deserialize(response.body(), new JsonObject());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

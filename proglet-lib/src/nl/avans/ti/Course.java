@@ -62,14 +62,14 @@ public class Course {
     public CompletableFuture<Void> unregister() {
         return CompletableFuture.runAsync(() ->
         {
-            JsonObject loginResult = new RestClient(Proglet.host).post("api/Courses/unregister/" + id, null);
+            JsonObject loginResult = new RestClient(Proglet.host).post("api/Courses/unregister/" + id);
         });
     }
 
     public CompletableFuture<Void> enroll() {
         return CompletableFuture.runAsync(() ->
         {
-            JsonObject loginResult = new RestClient(Proglet.host).post("api/Courses/Enroll/" + id, null);
+            JsonObject loginResult = new RestClient(Proglet.host).post("api/Courses/Enroll/" + id);
         });
     }
 
