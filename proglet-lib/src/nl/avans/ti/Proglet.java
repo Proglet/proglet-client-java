@@ -98,10 +98,10 @@ public class Proglet {
             MultiPartBodyPublisher publisher = new MultiPartBodyPublisher()
                     .addPart("CourseId", courseId+"")
                     .addPart("ExerciseName", exerciseName)
-                    .addPart("Data", () -> new ByteArrayInputStream(zipData), "test.txt", "text/plain");
+                    .addPart("Data", () -> new ByteArrayInputStream(zipData), "project.zip", "application/zip");
 
 
-            JsonObject data = new RestClient(Proglet.host).post("api/Exercises/Submit", publisher);
+            JsonObject data = new RestClient(Proglet.host).post("api/Submissions/Submit", publisher);
         });
     }
 }
