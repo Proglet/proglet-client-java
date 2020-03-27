@@ -2,15 +2,23 @@ package nl.avans.ti;
 
 import com.github.cliftonlabs.json_simple.JsonArray;
 import com.github.cliftonlabs.json_simple.JsonObject;
-import javafx.application.Application;
 import nl.avans.ti.model.LoginGui;
+import nl.avans.ti.model.LoginMethod;
+import nl.avans.ti.tinyhttp.HttpServer;
 import nl.avans.ti.util.MultiPartBodyPublisher;
 
+import java.awt.*;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.*;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -19,14 +27,14 @@ public class Proglet {
     public static String token = "";
 
 
-    public static CompletableFuture<List<String>> loginServices()
+    public static CompletableFuture<List<LoginMethod>> loginServices()
     {
-        return CompletableFuture.supplyAsync(new Supplier<List<String>>() {
+        return CompletableFuture.supplyAsync(new Supplier<List<LoginMethod>>() {
             @Override
-            public List<String> get() {
+            public List<LoginMethod> get() {
                 JsonArray options = new RestClient(Proglet.host).getArray("api/login");
-                List<String> loginOptions = new ArrayList<>();
-                options.forEach(s -> loginOptions.add((String)s));
+                List<LoginMethod> loginOptions = new ArrayList<>();
+                options.forEach(s -> loginOptions.add(new LoginMethod((String)((JsonObject)s).get("name"), (String)((JsonObject)s).get("type"))));
                 return loginOptions;
             }
         });
@@ -38,9 +46,24 @@ public class Proglet {
         return CompletableFuture.supplyAsync(new Supplier<LoginResponse>() {
             @Override
             public LoginResponse get() {
+                String type = "";
 
+                try {
+                    List<LoginMethod> loginMethods = loginServices().get();
+                    type = loginMethods.stream().filter(s -> s.getName().equals(service)).findFirst().orElse(null).getType();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+
+                if(type.equals(""))
+                    return null;
+
+                //TODO: make sure 5702 is not taken
                 JsonObject postData = new JsonObject();
                 postData.put("loginservice", service);
+                if(type.toLowerCase().equals("oauth"))
+                    postData.put("return", "http://localhost:5702/");
                 JsonObject loginResult = new RestClient(Proglet.host).post("api/login/login", postData);
 
                 if(loginResult == null) {
@@ -51,11 +74,42 @@ public class Proglet {
                 switch((String)loginResult.get("result"))
                 {
                     case "oauth":
-                        Application.launch(LoginGui.class, (String)loginResult.get("url"));
-                        //after browser closed...
-                        postData = new JsonObject();
-                        postData.put("oauth_token", LoginGui.oauth_token);
-                        postData.put("oauth_verifier", LoginGui.oauth_verifier);
+                        Lock lock = new ReentrantLock();
+                        Condition blocker = lock.newCondition();
+                        lock.lock();
+
+                        try {
+                            Desktop.getDesktop().browse(new URI((String)loginResult.get("url")));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (URISyntaxException e) {
+                            e.printStackTrace();
+                        }
+
+                        postData.clear();
+
+                        HttpServer server = new HttpServer(5702);
+                        server.on("/", params -> {
+                            if(!params.containsKey("oauth_verifier") || !params.containsKey("oauth_verifier"))
+                                return "Error, parameters not set";
+                            postData.put("oauth_token", params.get("oauth_token"));
+                            postData.put("oauth_verifier", params.get("oauth_verifier"));
+                            lock.lock();
+                            blocker.signal();
+                            lock.unlock();
+                            return "You are now logged in. You can close this browser<script>setTimeout('window.close()', 2000);</script>";
+                        });
+                        server.start();
+
+                        try {
+                            blocker.await();
+                            lock.unlock();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        server.stop();
+
+
                         postData.put("jwt", (String)loginResult.get("jwt"));
                         postData.put("loginservice", service);
 

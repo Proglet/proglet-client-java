@@ -1,8 +1,5 @@
 package nl.avans.ti.util;
 
-import nl.avans.ti.commands.Help;
-
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

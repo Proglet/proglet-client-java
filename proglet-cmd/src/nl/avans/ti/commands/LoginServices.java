@@ -1,11 +1,9 @@
 package nl.avans.ti.commands;
 
-import nl.avans.ti.LoginResponse;
 import nl.avans.ti.Proglet;
+import nl.avans.ti.model.LoginMethod;
 import nl.avans.ti.util.Command;
-import nl.avans.ti.util.Parameter;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -15,11 +13,11 @@ public class LoginServices implements Runnable {
     @Override
     public void run() {
         try {
-            List<String> services  = Proglet.loginServices().get();
+            List<LoginMethod> services  = Proglet.loginServices().get();
 
             System.out.println("Login services available: ");
-            for(String service : services) {
-                System.out.println(" - " + service);
+            for(LoginMethod service : services) {
+                System.out.println(" - " + service.getName() + "(" + service.getType() + ")");
             }
         } catch (InterruptedException e) {
             e.printStackTrace();

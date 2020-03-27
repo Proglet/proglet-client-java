@@ -1,12 +1,9 @@
 package nl.avans.ti.commands.courses;
 
 import nl.avans.ti.Course;
-import nl.avans.ti.LoginResponse;
 import nl.avans.ti.Proglet;
 import nl.avans.ti.util.Command;
-import nl.avans.ti.util.Parameter;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 

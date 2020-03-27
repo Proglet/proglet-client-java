@@ -3,16 +3,13 @@ package nl.avans.ti.proglet.gui;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.components.JBList;
-import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.components.JBTextField;
-import javafx.scene.layout.FlowPane;
 import nl.avans.ti.Proglet;
 
 import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 public class LoginServiceSelect extends DialogWrapper {
 
@@ -46,7 +43,7 @@ public class LoginServiceSelect extends DialogWrapper {
             Proglet.loginServices().thenAccept(services ->
             {
                 loginService.setPaintBusy(false);
-                loginService.setListData(services.toArray(new String[0]));
+                loginService.setListData(services.stream().map(s -> s.getName()).collect(Collectors.toList()).toArray(new String[0]));
                 if (services.size() > 0)
                     loginService.setSelectedIndex(0);
             });
