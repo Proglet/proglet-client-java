@@ -32,6 +32,8 @@ public class Test extends AnAction {
         VirtualFile currentFile = FileDocumentManager.getInstance().getFile(currentDoc);
         Module module = ModuleUtil.findModuleForFile(currentFile, project);
 
+        var rootDir = Paths.get(project.getBasePath());
+
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         /*OutputStream os = null;
         try {
@@ -45,6 +47,7 @@ public class Test extends AnAction {
         for(VirtualFile contentRoot : contentRoots)
         {
             Path rootPath = Paths.get(contentRoot.getPath()).getParent();
+
             VfsUtilCore.iterateChildrenRecursively(contentRoot, null, new ContentIterator() {
                 @Override
                 public boolean processFile(@NotNull VirtualFile virtualFile) {
@@ -52,7 +55,7 @@ public class Test extends AnAction {
                         return true;
 
                     Path path = Paths.get(virtualFile.getPath());
-                    Path relative = rootPath.relativize(path);
+                    Path relative = rootDir.relativize(path);
                     System.out.println(relative.toString());
 
                     try {
@@ -89,9 +92,15 @@ public class Test extends AnAction {
         }
 
 
-        Proglet.submitExercise(courseId, module.getName(), os.toByteArray());
+        String moduleName = module.getName();
+        if(!moduleName.contains("-") || !moduleName.contains("_"))
+        {
+            Messages.showMessageDialog(project, "Module name "+moduleName+"invalid, no - found, so cannot detect subject/exercise", "Error", Messages.getErrorIcon());
+            return;
+        }
+        moduleName = moduleName.replaceFirst("-","/");
+        moduleName = moduleName.substring(0, moduleName.lastIndexOf("_"));
 
-        Messages.showMessageDialog(project, "Wrote to " + project.getBasePath() + "/"+module.getName()+".zip", "Test", Messages.getInformationIcon());
-
+        Proglet.submitExercise(courseId, moduleName, os.toByteArray());
     }
 }

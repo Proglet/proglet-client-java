@@ -90,7 +90,7 @@ public class Proglet {
 
                         HttpServer server = new HttpServer(5702);
                         server.on("/", params -> {
-                            if(!params.containsKey("oauth_verifier") || !params.containsKey("oauth_verifier"))
+                            if(!params.containsKey("oauth_token") || !params.containsKey("oauth_verifier"))
                                 return "Error, parameters not set";
                             postData.put("oauth_token", params.get("oauth_token"));
                             postData.put("oauth_verifier", params.get("oauth_verifier"));
@@ -106,8 +106,9 @@ public class Proglet {
                             lock.unlock();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
+                        } finally {
+                            server.stop();
                         }
-                        server.stop();
 
 
                         postData.put("jwt", (String)loginResult.get("jwt"));
